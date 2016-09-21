@@ -1,0 +1,30 @@
+body {
+    font-family: Verdana;
+}
+
+.hubbubUser {
+    border: 3px steelblue ridge;
+    width: 40%;
+    text-align: center;
+    background: #fdf3e9;
+    margin: 8px;
+    padding: 8px;
+}
+
+.userName {
+    font-weight: bold;
+}
+
+.joinDate {
+    font-style: oblique;
+}
+
+.nav a {
+    padding: 5px;
+    margin: 20px;
+    background: #fdf3e9;
+}
+
+.flash {
+    color: red;
+}
