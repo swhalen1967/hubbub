@@ -1,5 +1,7 @@
 package edu.acc.j2ee.hubbub.controllers;
 
+import edu.acc.j2ee.hubbub.models.HubbubRegisterBean;
+import edu.acc.j2ee.hubbub.models.HubbubRegisterResult;
 import edu.acc.j2ee.hubbub.models.HubbubUser;
 import edu.acc.j2ee.hubbub.models.HubbubUserDao;
 import java.io.File;
@@ -24,6 +26,7 @@ public class HubbubController extends HttpServlet {
             action = "timeline";
         String destination;
         switch (action) {
+            case "register": destination = register(request); break;
             case "logout": destination = logout(request); break;
             case "login": destination = login(request); break;
             case "timeline":
@@ -58,6 +61,25 @@ public class HubbubController extends HttpServlet {
         } else {
             request.setAttribute("flash", "Access Denied");
             return "login";
+        }
+    }
+    
+    public String register(HttpServletRequest request) {
+        if (request.getMethod().equalsIgnoreCase("GET"))
+            return "register";
+        String user = request.getParameter("user");
+        String pass1 = request.getParameter("pass1");
+        String pass2 = request.getParameter("pass2");
+        HubbubRegisterBean bean = new HubbubRegisterBean(user, pass1, pass2);
+        HubbubUserDao dao = (HubbubUserDao)this.getServletContext().getAttribute("userDao");
+        HubbubRegisterResult result = dao.register(bean);
+        if (result.success()) {
+            request.getSession().setAttribute("user", result.getUser());
+            return timeline(request);
+        } else {
+            request.setAttribute("flash", "Registration Unsuccessful");
+            request.setAttribute("errors", result.getErrors());
+            return "register";
         }
     }
     

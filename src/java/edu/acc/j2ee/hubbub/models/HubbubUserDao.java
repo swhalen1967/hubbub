@@ -1,5 +1,6 @@
 package edu.acc.j2ee.hubbub.models;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,6 +13,29 @@ public class HubbubUserDao {
     public static final Pattern JOIN_PATTERN = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$");
 
     private final List<HubbubUser> REPOSITORY = new ArrayList<>();
+    
+    public HubbubRegisterResult register(HubbubRegisterBean bean) {
+        HubbubRegisterResult result = new HubbubRegisterResult();
+        if (bean.getUser() == null || bean.getPass1() == null || bean.getPass2() == null) {
+            result.addError("One or more fields are empty");
+            return result;
+        }
+        if (!bean.getPass1().equals(bean.getPass2()))
+            result.addError("Passwords do not match");
+        if (!USER_PATTERN.matcher(bean.getUser()).matches())
+            result.addError("User name field is empty or invalid");
+        if (!PASS_PATTERN.matcher(bean.getPass1()).matches())
+            result.addError("First password field is invalid");
+        if (!PASS_PATTERN.matcher(bean.getPass2()).matches())
+            result.addError("Second password field is invalid");
+        if (result.getErrors().size() == 0) {
+            HubbubUser user = new HubbubUser(
+                bean.getUser(), bean.getPass1(), LocalDate.now().toString());
+            result.setUser(user);
+            this.addUser(user);
+        }
+        return result;
+    }
     
     public HubbubUser authenticate(String userName, String password) {
         if (!USER_PATTERN.matcher(userName).matches() ||
