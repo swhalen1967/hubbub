@@ -20,7 +20,7 @@ public class HubbubRegisterResult {
     }
 
     public boolean success() {
-        return errors.size() == 0;
+        return errors.isEmpty();
     }
 
     public HubbubUser getUser() {

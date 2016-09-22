@@ -28,7 +28,7 @@ public class HubbubUserDao {
             result.addError("First password field is invalid");
         if (!PASS_PATTERN.matcher(bean.getPass2()).matches())
             result.addError("Second password field is invalid");
-        if (result.getErrors().size() == 0) {
+        if (result.getErrors().isEmpty()) {
             HubbubUser user = new HubbubUser(
                 bean.getUser(), bean.getPass1(), LocalDate.now().toString());
             result.setUser(user);
