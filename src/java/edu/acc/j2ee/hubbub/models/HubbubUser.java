@@ -36,10 +36,10 @@ public class HubbubUser implements java.io.Serializable {
     public void setJoinDate(String joinDate) {
         this.joinDate = joinDate;
     }
-    
+
     @Override
     public String toString() {
-        return String.format("HubbubUser[userName:%s, joinDate:%s",
-                userName, joinDate);
+        return "HubbubUser{" + "userName=" + userName + ", joinDate=" + joinDate + '}';
     }
+    
 }
