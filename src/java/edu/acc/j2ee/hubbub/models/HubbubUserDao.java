@@ -16,7 +16,9 @@ public class HubbubUserDao {
     
     public HubbubRegisterResult register(HubbubRegisterBean bean) {
         HubbubRegisterResult result = new HubbubRegisterResult();
-        if (bean.getUser() == null || bean.getPass1() == null || bean.getPass2() == null) {
+        if (bean.getUser() == null || bean.getPass1() == null || bean.getPass2() == null
+                || bean.getUser().length() < 1 || bean.getPass1().length() < 1 ||
+                bean.getPass2().length() < 1) {
             result.addError("One or more fields are empty");
             return result;
         }
@@ -31,8 +33,10 @@ public class HubbubUserDao {
         if (result.getErrors().isEmpty()) {
             HubbubUser user = new HubbubUser(
                 bean.getUser(), bean.getPass1(), LocalDate.now().toString());
-            result.setUser(user);
-            this.addUser(user);
+            if (this.addUser(user))
+                result.setUser(user);
+            else
+                result.addError("That user name is unavailable.");
         }
         return result;
     }

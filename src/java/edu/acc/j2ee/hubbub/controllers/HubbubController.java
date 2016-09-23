@@ -71,7 +71,8 @@ public class HubbubController extends HttpServlet {
         String pass1 = request.getParameter("pass1");
         String pass2 = request.getParameter("pass2");
         HubbubRegisterBean bean = new HubbubRegisterBean(user, pass1, pass2);
-        HubbubUserDao dao = (HubbubUserDao)this.getServletContext().getAttribute("userDao");
+        HubbubUserDao dao = (HubbubUserDao)this.getServletContext().
+                getAttribute("userDao");
         HubbubRegisterResult result = dao.register(bean);
         if (result.success()) {
             request.getSession().setAttribute("user", result.getUser());
