@@ -1,11 +1,11 @@
 package edu.acc.j2ee.hubbub.controllers;
 
 import edu.acc.j2ee.hubbub.models.HubbubRegisterBean;
-import edu.acc.j2ee.hubbub.models.HubbubRegisterResult;
 import edu.acc.j2ee.hubbub.models.HubbubUser;
 import edu.acc.j2ee.hubbub.models.HubbubUserDao;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -73,13 +73,13 @@ public class HubbubController extends HttpServlet {
         HubbubRegisterBean bean = new HubbubRegisterBean(user, pass1, pass2);
         HubbubUserDao dao = (HubbubUserDao)this.getServletContext().
                 getAttribute("userDao");
-        HubbubRegisterResult result = dao.register(bean);
-        if (result.success()) {
-            request.getSession().setAttribute("user", result.getUser());
+        List<String> errors = dao.register(bean);
+        if (errors.isEmpty()) {
+            request.getSession().setAttribute("user", dao.getUserByUserName(user));
             return timeline(request);
         } else {
             request.setAttribute("flash", "Registration Unsuccessful");
-            request.setAttribute("errors", result.getErrors());
+            request.setAttribute("errors", errors);
             return "register";
         }
     }

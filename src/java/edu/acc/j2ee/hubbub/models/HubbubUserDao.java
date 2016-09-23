@@ -14,31 +14,30 @@ public class HubbubUserDao {
 
     private final List<HubbubUser> REPOSITORY = new ArrayList<>();
     
-    public HubbubRegisterResult register(HubbubRegisterBean bean) {
-        HubbubRegisterResult result = new HubbubRegisterResult();
+    public List<String> register(HubbubRegisterBean bean) {
+        //HubbubRegisterResult result = new HubbubRegisterResult();
+        List<String> errors = new ArrayList<>();
         if (bean.getUser() == null || bean.getPass1() == null || bean.getPass2() == null
                 || bean.getUser().length() < 1 || bean.getPass1().length() < 1 ||
                 bean.getPass2().length() < 1) {
-            result.addError("One or more fields are empty");
-            return result;
+            errors.add("One or more fields are empty");
+            return errors;
         }
         if (!bean.getPass1().equals(bean.getPass2()))
-            result.addError("Passwords do not match");
+            errors.add("Passwords do not match");
         if (!USER_PATTERN.matcher(bean.getUser()).matches())
-            result.addError("User name field is empty or invalid");
+            errors.add("User name field is empty or invalid");
         if (!PASS_PATTERN.matcher(bean.getPass1()).matches())
-            result.addError("First password field is invalid");
+            errors.add("First password field is invalid");
         if (!PASS_PATTERN.matcher(bean.getPass2()).matches())
-            result.addError("Second password field is invalid");
-        if (result.getErrors().isEmpty()) {
+            errors.add("Second password field is invalid");
+        if (errors.isEmpty()) {
             HubbubUser user = new HubbubUser(
                 bean.getUser(), bean.getPass1(), LocalDate.now().toString());
-            if (this.addUser(user))
-                result.setUser(user);
-            else
-                result.addError("That user name is unavailable.");
+            if (!this.addUser(user))
+                errors.add("That user name is unavailable.");
         }
-        return result;
+        return errors;
     }
     
     public HubbubUser authenticate(String userName, String password) {
@@ -59,6 +58,13 @@ public class HubbubUserDao {
             }
         }
         return REPOSITORY.add(user);
+    }
+    
+    public HubbubUser getUserByUserName(String userName) {
+        for (HubbubUser u : REPOSITORY) 
+            if (u.getUserName().equals(userName))
+                return u;
+        return null;
     }
 
     public List<HubbubUser> getAllUsers() {
