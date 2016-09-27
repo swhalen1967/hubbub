@@ -1,9 +1,12 @@
 package edu.acc.j2ee.hubbub.controllers;
 
+import edu.acc.j2ee.hubbub.models.HubbubPostDao;
+import edu.acc.j2ee.hubbub.models.HubbubRegisterBean;
 import edu.acc.j2ee.hubbub.models.HubbubUser;
 import edu.acc.j2ee.hubbub.models.HubbubUserDao;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,8 +27,10 @@ public class HubbubController extends HttpServlet {
             action = "timeline";
         String destination;
         switch (action) {
+            case "register": destination = register(request); break;
             case "logout": destination = logout(request); break;
             case "login": destination = login(request); break;
+            case "post": destination = post(request); break;
             case "timeline":
             default: destination = timeline(request);
         }
@@ -34,8 +39,10 @@ public class HubbubController extends HttpServlet {
     }
 
     private String timeline(HttpServletRequest request) {
-        HubbubUserDao dao = (HubbubUserDao)this.getServletContext().getAttribute("userDao");
-        request.setAttribute("users", dao.getUsersByUserNameAscending());
+        HubbubUserDao users = (HubbubUserDao)this.getServletContext().getAttribute("userDao");
+        request.setAttribute("users", users.getUsersByUserNameAscending());
+        HubbubPostDao posts = (HubbubPostDao)this.getServletContext().getAttribute("postDao");
+        request.setAttribute("posts", posts.getAllPostsByPostDateDescending());
         return "timeline";
     }
     
@@ -45,6 +52,8 @@ public class HubbubController extends HttpServlet {
     }
     
     private String login(HttpServletRequest request) {
+        if (request.getSession().getAttribute("user") != null)
+            return timeline(request);
         if (request.getMethod().equalsIgnoreCase("GET"))
             return "login";
         String userName = request.getParameter("userName");
@@ -59,6 +68,44 @@ public class HubbubController extends HttpServlet {
             request.setAttribute("flash", "Access Denied");
             return "login";
         }
+    }
+    
+    public String register(HttpServletRequest request) {
+        if (request.getSession().getAttribute("user") != null)
+            return timeline(request);
+        if (request.getMethod().equalsIgnoreCase("GET"))
+            return "register";
+        String user = request.getParameter("user");
+        String pass1 = request.getParameter("pass1");
+        String pass2 = request.getParameter("pass2");
+        HubbubRegisterBean bean = new HubbubRegisterBean(user, pass1, pass2);
+        HubbubUserDao dao = (HubbubUserDao)this.getServletContext().getAttribute("userDao");
+        List<String> errors = dao.register(bean);
+        if (errors.isEmpty()) {
+            request.getSession().setAttribute("user", dao.getUserByUserName(user));
+            return timeline(request);
+        } else {
+            request.setAttribute("flash", "Registration Unsuccessful");
+            request.setAttribute("errors", errors);
+            return "register";
+        }
+    }
+    
+    public String post(HttpServletRequest request) {
+        if (request.getSession().getAttribute("user") == null)
+            return timeline(request);
+        if (request.getMethod().equalsIgnoreCase("GET"))
+            return "post";
+        String content = request.getParameter("content");
+        HubbubPostDao dao = (HubbubPostDao)this.getServletContext().getAttribute("postDao");
+        HubbubUser user = (HubbubUser)request.getSession().getAttribute("user");
+        String error = dao.addPost(content, user);
+        if (error != null) {
+            request.setAttribute("flash", error);
+            return "post";
+        }
+        return timeline(request);
+        
     }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

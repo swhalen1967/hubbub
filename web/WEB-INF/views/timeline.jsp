@@ -24,6 +24,16 @@
                 Join Date: <span class="joinDate">${user.joinDate}</span>
             </div>
         </c:forEach>
+        <c:if test="${not empty user}">
+            <h1>Hubbub&trade;'s users have this to say:</h1>
+            <c:forEach var="post" items="${posts}">
+                <div class="hubbubPost">
+                    User <span class="userName">${post.user.userName}</span>
+                    posted <span class="postDate">${post.postDate}</span><br/>
+                    <div class="post">${post.content}</div>
+                </div>
+            </c:forEach>
+        </c:if>
         <div class="nav">
             <c:choose>
                 <c:when test="${empty user}">
@@ -35,6 +45,7 @@
                     </a>
                 </c:when>
                 <c:otherwise>
+                    <a href="go?action=post">Post something pithy</a>
                     <a href="go?action=logout">Log out for now</a>
                 </c:otherwise>
             </c:choose>
