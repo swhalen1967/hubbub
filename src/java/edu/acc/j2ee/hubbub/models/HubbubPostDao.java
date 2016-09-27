@@ -36,4 +36,8 @@ public class HubbubPostDao {
     public synchronized boolean addPost(HubbubPost post) {
         return REPOSITORY.add(post);
     }
+    
+    public synchronized boolean removePost(HubbubPost post) {
+        return REPOSITORY.remove(post);
+    }
 }

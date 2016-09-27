@@ -36,7 +36,7 @@
                         placeholder="same as preceding password field"
                         required/></td>
                 </tr>
-                <tr><td colspan="2"><input type="submit" value="Sign me up!"/></td>
+                <tr><td colspan="2"><input class="submit" type="submit" value="Sign me up!"/></td>
             </table>
         </form>
         <div class="nav">

@@ -2,7 +2,12 @@ body {
     font-family: Verdana;
 }
 
-.hubbubUser {
+input.submit {
+    border: 1px steelblue solid;
+    background-color: #fdf3e9;
+}
+
+.hubbubUser, .hubbubPost {
     border: 3px steelblue ridge;
     width: 40%;
     text-align: center;
@@ -15,8 +20,16 @@ body {
     font-weight: bold;
 }
 
-.joinDate {
+.joinDate, .postDate {
     font-style: oblique;
+}
+
+.post {
+    text-align: left;
+    font-family: Arial;
+    font-size: larger;
+    margin: 8px;
+    color: steelblue;
 }
 
 .nav a {
@@ -25,4 +38,18 @@ body {
 
 .flash {
     color: red;
+}
+
+.postArea {
+    margin: 8px;
+    padding: 8px;
+}
+
+textarea {
+    resize: none;
+    overflow: auto;
+    font-family: Arial;
+    font-size: 16px;
+    outline: none;
+    background: #fdf3e9;
 }
