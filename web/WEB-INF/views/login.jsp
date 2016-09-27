@@ -12,7 +12,7 @@
             <input type="hidden" name="action" value="login"/>
             <table>
                 <tr><td>User Name:</td>
-                    <td><input type="text" name="userName" required/></td>
+                    <td><input id="firstField" type="text" name="userName" required/></td>
                 </tr>
                 <tr>
                     <td>Password:</td>
@@ -29,5 +29,8 @@
             <a href="go?action=register">I need to sign up for this awesomeness</a>
             <a href="go?action=timeline">Just show me the timeline</a>
         </div>
+        <script type="text/javascript">
+            document.getElementById("firstField").focus();
+        </script>
     </body>
 </html>

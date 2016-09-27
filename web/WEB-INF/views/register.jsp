@@ -12,7 +12,7 @@
             <ul>
                 <c:forEach var="error" items="${errors}">
                     <li class="flash">${error}</li>
-                </c:forEach>
+                    </c:forEach>
             </ul>
         </c:if>
         <form method="POST" action="go">
@@ -20,21 +20,21 @@
             <table>
                 <tr>
                     <td>Pick a user name:</td>
-                    <td><input type="text" name="user"
-                        placeholder="6 to 12 letters, numbers, and/or underscores"
-                        required/>
+                    <td><input id="firstField" type="text" name="user"
+                               placeholder="6 to 12 letters, numbers, and/or underscores"
+                               required/>
                 </tr>
                 <tr>
                     <td>Pick a password:</td>
                     <td><input type="password" name="pass1" 
-                        placeholder="8 to 16 letters, numbers, underscores, dots, and/or hyphens"
-                        required />
+                               placeholder="8 to 16 letters, numbers, underscores, dots, and/or hyphens"
+                               required />
                 </tr>
                 <tr>
                     <td>Repeat the password:</td>
                     <td><input type="password" name ="pass2"
-                        placeholder="same as preceding password field"
-                        required/></td>
+                               placeholder="same as preceding password field"
+                               required/></td>
                 </tr>
                 <tr><td colspan="2"><input class="submit" type="submit" value="Sign me up!"/></td>
             </table>
@@ -43,5 +43,8 @@
             <a href="go?action=timeline">Just take me to the timeline right now</a>
             <a href="go?action=login">I think I already have a user name for Hubbub&trade;</a>
         </div>
+        <script type="text/javascript">
+            document.getElementById("firstField").focus();
+        </script>
     </body>
 </html>
