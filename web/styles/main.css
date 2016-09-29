@@ -32,6 +32,11 @@ input.submit {
     color: steelblue;
 }
 
+.postid {
+    font-size: smaller;
+    color: gray;
+}
+
 .nav a {
    margin: 5px 10px 5px 10px;
 }

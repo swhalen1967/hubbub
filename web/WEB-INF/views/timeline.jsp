@@ -8,29 +8,28 @@
     </head>
     <body>
         <div class="masthead"><img src="images/hubbub.png"/></div>
-        <h1>
         <c:choose>
-            <c:when test="${empty user}">
-                Hubbub&trade; welcomes the following users:
+            <c:when test="${not empty errors}">
+                <ul>
+                    <c:forEach var="error" items="${errors}">
+                        <li class="flash">${error}</li>
+                    </c:forEach>
+                </ul>
+            </c:when>
+            <c:when test="${not empty user}">
+                <h1>Welcome, ${user.userName}.</h1>
+                <h2>Here is the famous Hubbub&trade; Timeline:</h2>
             </c:when>
             <c:otherwise>
-                Welcome, ${user.userName}. Here are Hubbub&trade;'s users:
+                <h1>Here is a taste of what Hubbub&trade;'s users have to say:</h1>
             </c:otherwise>
         </c:choose>
-        </h1>
-        <c:forEach var="user" items="${users}">
-            <div class="hubbubUser">
-                User Name: <span class="userName">${user.userName}</span><br/>
-                Join Date: <span class="joinDate">${user.joinDate}</span>
-            </div>
-        </c:forEach>
-        <c:if test="${not empty user}">
-            <h1>Hubbub&trade;'s users have this to say:</h1>
+        <c:if test="${empty errors}">
             <c:forEach var="post" items="${posts}">
                 <div class="hubbubPost">
-                    User <span class="userName">${post.user.userName}</span>
-                    posted <span class="postDate">${post.postDate}</span><br/>
-                    <div class="post">${post.content}</div>
+                    Posted by <span class="userName">${post.user.userName}</span>
+                    <span class="postDate">${post.postDate}</span>
+                    <div class="post"> ${post.content}</div>
                 </div>
             </c:forEach>
         </c:if>

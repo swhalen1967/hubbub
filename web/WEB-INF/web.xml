@@ -1,64 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <context-param>
-        <param-name>user.1.name</param-name>
-        <param-value>johndoe</param-value>
+        <param-name>jdbc.protocol</param-name>
+        <param-value>jdbc:derby</param-value>
     </context-param>
     <context-param>
-        <param-name>user.1.pass</param-name>
+        <param-name>jdbc.host</param-name>
+        <param-value>localhost</param-value>
+    </context-param>
+    <context-param>
+        <param-name>jdbc.port</param-name>
+        <param-value>1527</param-value>
+    </context-param>
+    <context-param>
+        <param-name>jdbc.dbname</param-name>
+        <param-value>hubbubnew</param-value>
+    </context-param>
+    <context-param>
+        <param-name>jdbc.user</param-name>
         <param-value>javauser</param-value>
     </context-param>
     <context-param>
-        <param-name>user.1.join</param-name>
-        <param-value>2016-09-05</param-value>
-    </context-param>
-    <context-param>
-        <param-name>user.2.name</param-name>
-        <param-value>jilljack</param-value>
-    </context-param>
-    <context-param>
-        <param-name>user.2.pass</param-name>
+        <param-name>jdbc.pass</param-name>
         <param-value>javauser</param-value>
-    </context-param>
-    <context-param>
-        <param-name>user.2.join</param-name>
-        <param-value>2016-09-13</param-value>
-    </context-param>
-    <context-param>
-        <param-name>post.1.content</param-name>
-        <param-value>This site totally rocks!</param-value>
-    </context-param>
-    <context-param>
-        <param-name>post.1.date</param-name>
-        <param-value>2016-09-05T15:21:18</param-value>
-    </context-param>
-    <context-param>
-        <param-name>post.1.user</param-name>
-        <param-value>johndoe</param-value>
-    </context-param>
-    <context-param>
-        <param-name>post.2.content</param-name>
-        <param-value>I think I'm going to like it here.</param-value>
-    </context-param>
-    <context-param>
-        <param-name>post.2.date</param-name>
-        <param-value>2016-09-13T1:04:04</param-value>
-    </context-param>
-    <context-param>
-        <param-name>post.2.user</param-name>
-        <param-value>jilljack</param-value>
-    </context-param>
-    <context-param>
-        <param-name>post.3.content</param-name>
-        <param-value>Hey! My friend John Doe is a member, too!</param-value>
-    </context-param>
-    <context-param>
-        <param-name>post.3.date</param-name>
-        <param-value>2016-09-15T10:09:45</param-value>
-    </context-param>
-    <context-param>
-        <param-name>post.3.user</param-name>
-        <param-value>jilljack</param-value>
     </context-param>
     <listener>
         <description>ServletContextListener</description>
@@ -70,6 +34,10 @@
         <init-param>
             <param-name>view.path</param-name>
             <param-value>/WEB-INF/views</param-value>
+        </init-param>
+        <init-param>
+            <param-name>posts.perpage</param-name>
+            <param-value>10</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

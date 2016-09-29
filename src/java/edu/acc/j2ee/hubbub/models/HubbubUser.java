@@ -4,11 +4,13 @@ public class HubbubUser implements java.io.Serializable {
     private String userName;
     private String password;
     private String joinDate;
+    private int userid;
     
-    public HubbubUser(String userName, String password, String joinDate) {
+    public HubbubUser(String userName, String password, String joinDate, int userId) {
         this.userName = userName;
         this.password = password;
         this.joinDate = joinDate;
+        this.userid = userId;
     }
     
     public HubbubUser() {}
@@ -39,7 +41,15 @@ public class HubbubUser implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "HubbubUser{" + "userName=" + userName + ", joinDate=" + joinDate + '}';
+        return "HubbubUser{" + "userName=" + userName + ", password=" + password + ", joinDate=" + joinDate + ", userid=" + userid + '}';
+    }
+
+    public int getUserid() {
+        return userid;
+    }
+
+    public void setUserid(int userid) {
+        this.userid = userid;
     }
     
 }

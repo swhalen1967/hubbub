@@ -7,12 +7,11 @@
     <body>
         <div class="masthead"><img src="images/hubbub.png"/></div>
         <h1>Sign up, then log-in to get bloggin'!</h1>
-        <c:if test="${not empty flash}">
-            <h2 class="flash">${flash}</h2>
+        <c:if test="${not empty errors}">
             <ul>
                 <c:forEach var="error" items="${errors}">
                     <li class="flash">${error}</li>
-                    </c:forEach>
+                </c:forEach>
             </ul>
         </c:if>
         <form method="POST" action="go">

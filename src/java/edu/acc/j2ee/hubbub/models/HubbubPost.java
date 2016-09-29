@@ -1,18 +1,19 @@
-
 package edu.acc.j2ee.hubbub.models;
 
 public class HubbubPost implements java.io.Serializable {
     private String content;
     private String postDate;
     private HubbubUser user;
+    private int postId;
 
     public HubbubPost() {
     }
 
-    public HubbubPost(String content, String postDate, HubbubUser user) {
+    public HubbubPost(String content, String postDate, HubbubUser user, int postId) {
         this.content = content;
         this.postDate = postDate;
         this.user = user;
+        this.postId = postId;
     }
 
     public String getContent() {
@@ -39,10 +40,17 @@ public class HubbubPost implements java.io.Serializable {
         this.user = user;
     }
 
+    public int getPostId() {
+        return postId;
+    }
+
+    public void setPostId(int postId) {
+        this.postId = postId;
+    }
+
     @Override
     public String toString() {
-        return "HubbubPost{" + "content=" + content + ", postDate=" + 
-                postDate + ", user=" + user + '}';
+        return "HubbubPost{" + "content=" + content + ", postDate=" + postDate + ", user=" + user + ", postId=" + postId + '}';
     }
     
 }

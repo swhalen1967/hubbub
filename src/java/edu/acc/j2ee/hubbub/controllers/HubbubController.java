@@ -1,11 +1,14 @@
 package edu.acc.j2ee.hubbub.controllers;
 
-import edu.acc.j2ee.hubbub.models.HubbubPostDao;
 import edu.acc.j2ee.hubbub.models.HubbubRegisterBean;
 import edu.acc.j2ee.hubbub.models.HubbubUser;
-import edu.acc.j2ee.hubbub.models.HubbubUserDao;
+import edu.acc.j2ee.hubbub.models.HubbubDao;
+import edu.acc.j2ee.hubbub.models.HubbubPost;
+import edu.acc.j2ee.hubbub.models.HubbubModel;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,10 +17,15 @@ import javax.servlet.http.HttpServletResponse;
 
 public class HubbubController extends HttpServlet {
     private String viewPath;
+    private HubbubDao dao;
+    private int postsPerPage;
     
     @Override
     public void init() throws ServletException {
         viewPath = this.getServletConfig().getInitParameter("view.path");
+        dao = (HubbubDao)this.getServletContext().getAttribute("dao");
+        String ppp = this.getServletConfig().getInitParameter("posts.perpage");
+        postsPerPage = Integer.parseInt(ppp);
     }    
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -34,15 +42,26 @@ public class HubbubController extends HttpServlet {
             case "timeline":
             default: destination = timeline(request);
         }
-        request.getRequestDispatcher(viewPath + File.separator + destination + ".jsp")
-            .forward(request, response);
+        request.getRequestDispatcher(viewPath + File.separator + destination +
+                ".jsp").forward(request, response);
     }
 
     private String timeline(HttpServletRequest request) {
-        HubbubUserDao users = (HubbubUserDao)this.getServletContext().getAttribute("userDao");
-        request.setAttribute("users", users.getUsersByUserNameAscending());
-        HubbubPostDao posts = (HubbubPostDao)this.getServletContext().getAttribute("postDao");
-        request.setAttribute("posts", posts.getAllPostsByPostDateDescending());
+        HubbubModel<List<HubbubPost>> model;
+        try {
+            if (request.getSession().getAttribute("user") == null)
+                model = dao.getSomePosts(postsPerPage);
+            else
+                model = dao.getPostsByPostDateDescending(postsPerPage);
+            if (model.hasErrors())
+                request.setAttribute("errors", model.getErrors());
+            else if (model.getModel() == null)
+                request.setAttribute("errors", Arrays.asList("Unexplained error"));
+            else
+                request.setAttribute("posts", model.getModel());
+        } catch (SQLException sqle) {
+            request.setAttribute("errors", Arrays.asList(sqle.getMessage()));
+        }
         return "timeline";
     }
     
@@ -58,16 +77,20 @@ public class HubbubController extends HttpServlet {
             return "login";
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");
-        HubbubUserDao dao = (HubbubUserDao)request.getServletContext()
-                .getAttribute("userDao");
-        HubbubUser user = dao.authenticate(userName, password);
-        if (user != null) {
-            request.getSession().setAttribute("user", user);
-            return timeline(request);
-        } else {
-            request.setAttribute("flash", "Access Denied");
-            return "login";
+        try {
+            HubbubModel<HubbubUser> model = dao.authenticate(userName, password);
+            if (model.hasErrors())
+                request.setAttribute("errors", model.getErrors());
+            else if (model.getModel() == null)
+                request.setAttribute("errors", Arrays.asList("Access Denied"));
+            else {
+                request.getSession().setAttribute("user", model.getModel());
+                return timeline(request);
+            } 
+        } catch (SQLException sqle) {
+            request.setAttribute("errors", Arrays.asList(sqle.getMessage()));
         }
+        return "login";
     }
     
     public String register(HttpServletRequest request) {
@@ -79,17 +102,21 @@ public class HubbubController extends HttpServlet {
         String pass1 = request.getParameter("pass1");
         String pass2 = request.getParameter("pass2");
         HubbubRegisterBean bean = new HubbubRegisterBean(user, pass1, pass2);
-        HubbubUserDao dao = (HubbubUserDao)this.getServletContext().getAttribute("userDao");
-        List<String> errors = dao.register(bean);
-        if (errors.isEmpty()) {
-            request.getSession().setAttribute("user", dao.getUserByUserName(user));
-            return timeline(request);
-        } else {
-            request.setAttribute("flash", "Registration Unsuccessful");
-            request.setAttribute("errors", errors);
-            return "register";
+        try {
+            HubbubModel<HubbubUser> model = dao.register(bean);
+            if (model.hasErrors())
+                request.setAttribute("errors", model.getErrors());
+            else if (model.getModel() == null)
+                request.setAttribute("errors", Arrays.asList("Unexplained error"));
+            else {
+                request.getSession().setAttribute("user", model.getModel());
+                return timeline(request);
+            }
+        } catch (SQLException sqle) {
+            request.setAttribute("errors", Arrays.asList(sqle.getMessage()));
         }
-    }
+        return "register";
+     }
     
     public String post(HttpServletRequest request) {
         if (request.getSession().getAttribute("user") == null)
@@ -97,15 +124,18 @@ public class HubbubController extends HttpServlet {
         if (request.getMethod().equalsIgnoreCase("GET"))
             return "post";
         String content = request.getParameter("content");
-        HubbubPostDao dao = (HubbubPostDao)this.getServletContext().getAttribute("postDao");
-        HubbubUser user = (HubbubUser)request.getSession().getAttribute("user");
-        String error = dao.addPost(content, user);
-        if (error != null) {
-            request.setAttribute("flash", error);
-            return "post";
+        HubbubUser user = (HubbubUser)
+                request.getSession().getAttribute("user");
+        try {
+            HubbubModel<HubbubPost> model = dao.addPost(content, user);
+            if (model.hasErrors())
+                request.setAttribute("errors", model.getErrors());
+            else
+                return timeline(request);                
+        } catch (SQLException sqle) {
+            request.setAttribute("errors", Arrays.asList(sqle.getMessage()));
         }
-        return timeline(request);
-        
+        return "post";       
     }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
